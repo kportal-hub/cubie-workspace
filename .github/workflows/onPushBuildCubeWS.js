@@ -3,12 +3,12 @@ const fs = require('fs');
 
 let buildCube = async (username, cube, lessons) => {
     try {
-        let res1 = await axios.post("https://cubie.now.sh/api/build-cube", {
+        let res1 = await axios.post("https://fc0de4b2.ngrok.io/api/build-cube", {
             username,
             cube
         });
         if (res1.data.result) {
-            return (await axios.post("https://cubie.now.sh/api/build-cube-init", {
+            return (await axios.post("https://fc0de4b2.ngrok.io/api/build-cube-init", {
                 username,
                 cube,
                 lessons
