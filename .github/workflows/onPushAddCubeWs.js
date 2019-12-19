@@ -4,12 +4,12 @@ const axios = require("axios");
 let addCube = async (username, cube) => {
     // call /add-cube for server
     try {
-        let res1 = await axios.post("https://d9d2270c.ngrok.io/api/add-cube", {
+        let res1 = await axios.post("https://cubie.now.sh/api/add-cube", {
             username,
             cube
         });
         if (res1.data.result) {
-            return (await axios.post("https://d9d2270c.ngrok.io/api/add-cube-init", {
+            return (await axios.post("https://cubie.now.sh/api/add-cube-init", {
                 username,
                 cube
             })).data
