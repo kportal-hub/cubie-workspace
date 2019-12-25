@@ -80,6 +80,6 @@ const wsOnPush = async (gitToken, repo) => {
     return await addCube(userInfo.username, cube, gitToken, repo)
 }
 
-wsOnPush(process.argv[2], process.argv[2]).then((res) => {
+wsOnPush(process.argv[2], process.argv[3]).then((res) => {
     console.log(res)
 })
