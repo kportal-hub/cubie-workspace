@@ -1,7 +1,7 @@
 const fs = require('fs');
 const axios = require("axios");
 
-let addCube = async (username, cube) => {
+let addCube = async (username, cube, gitToken) => {
     // call /add-cube for server
     try {
         let res1 = await axios.post("https://cubie.now.sh/api/add-cube", {
@@ -22,12 +22,12 @@ let addCube = async (username, cube) => {
     }
 }
 
-const wsOnPush = async () => {
+const wsOnPush = async (gitToken) => {
     const cube = JSON.parse(fs.readFileSync(process.env.NODE_CUBE, 'utf8')).commits[0].message.split(".")[0];
     const userInfo = JSON.parse(fs.readFileSync(`.cubie/cube.json`, 'utf8')).user;
-    return await addCube(userInfo.username, cube)
+    return await addCube(userInfo.username, cube, gitToken)
 }
 
-wsOnPush().then((res) => {
+wsOnPush(process.argv[2]).then((res) => {
     console.log(res)
 })
