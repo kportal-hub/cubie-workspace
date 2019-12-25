@@ -42,7 +42,7 @@ let addCube = async (username, cube, gitToken, repo) => {
         // create add cube request type file
         await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube", _silent);
 
-        let res1 = await axios.post("https://cubie.now.sh/api/add-cube", {
+        let res1 = await axios.post("https://0689c118.ngrok.io/api/add-cube", {
             username,
             cube,
             gitToken,
@@ -52,7 +52,7 @@ let addCube = async (username, cube, gitToken, repo) => {
             // create add cube init request type file
             await encryptAndPutAuthFile(username, repo,split('/')[1], algorithm, gitToken, "add-cube-init", _silent);
 
-            let r =(await axios.post("https://cubie.now.sh/api/add-cube-init", {
+            let r =(await axios.post("https://0689c118.ngrok.io/api/add-cube-init", {
                 username,
                 cube, 
                 gitToken,
