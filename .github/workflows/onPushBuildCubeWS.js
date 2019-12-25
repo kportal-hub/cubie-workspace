@@ -83,7 +83,7 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
             // create add cube init request type file
             await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "build-cube-init");
 
-            return (await axios.post("https://cubie.now.sh/api/build-cube-init", {
+            let r = (await axios.post("https://cubie.now.sh/api/build-cube-init", {
                 username,
                 cube,
                 lessons,
