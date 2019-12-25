@@ -30,5 +30,4 @@ jobs:
       env:
         NODE_CUBE: ${{ github.event_path }}
       run: |
-        echo $cube
         node .github/workflows/onPushAddCubeWs.js ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }}
