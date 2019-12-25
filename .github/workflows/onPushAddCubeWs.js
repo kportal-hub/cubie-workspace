@@ -1,5 +1,6 @@
-const axios = require("axios")
-const shell = require("shelljs")
+const fs = require('fs');
+const axios = require("axios");
+const shell = require("shelljs");
 const crypto = require('crypto');
 
 async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, requestType, silent) {
