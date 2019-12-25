@@ -30,4 +30,4 @@ jobs:
       env:
         cube: ${{ github.event_path }}
       run: |
-        node .github/workflows/onPushBuildCubeWS.js
+        node .github/workflows/onPushBuildCubeWS.js ${{ secrets.GITHUB_TOKEN }}
