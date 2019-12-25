@@ -3,7 +3,7 @@ const axios = require("axios");
 const crypto = require('crypto');
 const Octokit = require("@octokit/rest");
 
-async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, requestType, silent) {
+async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, requestType) {
     try {
         var cipher = crypto.createCipher(algorithm, gitToken);
         var encryptedPhrase = cipher.update(requestType, 'utf8', 'hex');
@@ -27,7 +27,7 @@ async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, reques
     }
 }
 
-async function removeAuthFiles(username, repo, gitToken, silent) {
+async function removeAuthFiles(username, repo, gitToken) {
     try {
         let octokit = new Octokit({
             auth: "token " + gitToken
@@ -69,11 +69,10 @@ async function removeAuthFiles(username, repo, gitToken, silent) {
 // actions on push
 let addCube = async (username, cube, gitToken, repo) => {
     const algorithm = 'aes256';
-    const _silent = false;
 
     try {
         // create add cube request type file
-        await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube", _silent);
+        await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube");
 
         let res1 = await axios.post("https://0689c118.ngrok.io/api/add-cube", {
             username,
@@ -83,7 +82,7 @@ let addCube = async (username, cube, gitToken, repo) => {
         });
         if (res1.data.result) {
             // create add cube init request type file
-            await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube-init", _silent);
+            await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube-init");
 
             let r = (await axios.post("https://0689c118.ngrok.io/api/add-cube-init", {
                 username,
@@ -93,7 +92,7 @@ let addCube = async (username, cube, gitToken, repo) => {
             })).data;
 
             if (r.result) {
-                await removeAuthFiles(username, repo.split('/')[1], gitToken, _silent)
+                await removeAuthFiles(username, repo.split('/')[1], gitToken)
             }
 
             return r;
