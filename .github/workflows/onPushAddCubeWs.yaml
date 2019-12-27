@@ -1,4 +1,4 @@
-name: Add New Course
+name: Add New Cube
 on:
   push:
     paths:    
@@ -26,7 +26,7 @@ jobs:
         npm install
       env:
         CI: true          
-    - name: request for new repo
+    - name: Add and fork new cube
       env:
         NODE_CUBE: ${{ github.event_path }}
       run: |

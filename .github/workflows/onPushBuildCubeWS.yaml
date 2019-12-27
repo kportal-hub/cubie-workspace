@@ -1,4 +1,4 @@
-name: Buil New Course
+name: Build New Course
 on:
   push:
     paths:    
@@ -21,12 +21,11 @@ jobs:
           ${{ runner.OS }}-build-${{ env.cache-name }}-
           ${{ runner.OS }}-build-
           ${{ runner.OS }}-          
-    - name: npm install, and test
-      run: |
-        npm install
+    - name: npm install
+      run: npm install
       env:
         CI: true          
-    - name: build new cube
+    - name: Build and fork newly created cube
       env:
         cube: ${{ github.event_path }}
       run: |
