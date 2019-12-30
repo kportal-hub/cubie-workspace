@@ -27,7 +27,8 @@ async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, reques
     }
 }
 
-async function removeAuthFiles(username, repo, gitToken) {
+
+async function removeAuthFiles(username, repo, requestType, gitToken) {
     try {
         let octokit = new Octokit({
             auth: "token " + gitToken
@@ -36,29 +37,15 @@ async function removeAuthFiles(username, repo, gitToken) {
         let sha1 = (await octokit.repos.getContents({
             owner: username,
             repo,
-            path: `add-cube.req`,
+            path: `${requestType}.req`,
         })).data.sha
         await octokit.repos.deleteFile({
             owner: username,
             repo,
-            path: `add-cube.req`,
+            path: `${requestType}.req`,
             branch: "master",
             message: "remove request file",
             sha: sha1
-        })
-
-        let sha2 = (await octokit.repos.getContents({
-            owner: username,
-            repo,
-            path: `add-cube-init.req`,
-        })).data.sha
-        await octokit.repos.deleteFile({
-            owner: username,
-            repo,
-            path: `add-cube-init.req`,
-            branch: "master",
-            message: "remove request file",
-            sha: sha2
         })
         return true
     } catch (err) {
@@ -71,7 +58,7 @@ let addCube = async (username, cube, gitToken, repo) => {
     const algorithm = 'aes256';
 
     try {
-        // create add cube request type file
+        // create add-cube request to authorize student access
         await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube");
 
         let res1 = await axios.post("https://cubie.now.sh/api/add-cube", {
@@ -81,9 +68,7 @@ let addCube = async (username, cube, gitToken, repo) => {
             repo: repo.split('/')[1]
         });
         if (res1.data.result) {
-            // create add cube init request type file
-            await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube-init");
-
+            // create add cube init request type file to authorize the action procedure
             let r = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
                 username,
                 cube,
@@ -92,7 +77,7 @@ let addCube = async (username, cube, gitToken, repo) => {
             })).data;
 
             if (r.result) {
-                await removeAuthFiles(username, repo.split('/')[1], gitToken)
+                await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
             }
 
             return r;
