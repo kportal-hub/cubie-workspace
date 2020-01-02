@@ -61,26 +61,30 @@ let addCube = async (username, cube, gitToken, repo) => {
         // create add-cube request to authorize student access
         await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "add-cube");
 
-        let res1 = await axios.post("https://cubie.now.sh/api/add-cube", {
+        let addCubeRes = await axios.post("https://cubie.now.sh/api/add-cube", {
             username,
             cube,
             gitToken,
             repo: repo.split('/')[1]
         });
-        if (res1.data.result) {
+        if (addCubeRes.data.result) {
             // create add cube init request type file to authorize the action procedure
-            let r = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
+            let cubeInitRes = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
                 username,
                 cube,
                 gitToken,
                 repo: repo.split('/')[1]
             })).data;
 
-            if (r.result) {
+            if (cubeInitRes.result) {
                 await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
             }
 
-            return r;
+            return cubeInitRes;
+        }
+        return {
+            result: false,
+            error: "Couldn't add cube: " + addCubeRes.data
         }
     } catch (err) {
         return {
