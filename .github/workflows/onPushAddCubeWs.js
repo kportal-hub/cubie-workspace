@@ -85,6 +85,15 @@ let addCube = async (username, cube, gitToken, repo) => {
             error: "Couldn't add cube: " + addCubeRes.data
         }
     } catch (err) {
+        try{
+            await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
+        }catch(e){
+            return {
+                result: false,
+                error: "Couldn't add cube: " + e.message
+            }
+        }
+        
         return {
             result: false,
             error: "Couldn't add cube: " + err.message
