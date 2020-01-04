@@ -91,9 +91,8 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
                 repo: repo.split('/')[1]
             })).data;
             
-            if (r.result) {
-                await removeAuthFiles(username, repo.split('/')[1], gitToken)
-            }
+            await removeAuthFiles(username, repo.split('/')[1], gitToken)
+
             return r;
         }
     } catch (err) {
