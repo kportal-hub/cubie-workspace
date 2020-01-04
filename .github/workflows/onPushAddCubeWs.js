@@ -76,10 +76,8 @@ let addCube = async (username, cube, gitToken, repo) => {
                 repo: repo.split('/')[1]
             })).data;
 
-            if (cubeInitRes.result) {
-                await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
-            }
-
+            await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
+            
             return cubeInitRes;
         }
         return {
