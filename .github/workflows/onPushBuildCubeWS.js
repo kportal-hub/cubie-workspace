@@ -96,6 +96,14 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
             return r;
         }
     } catch (err) {
+        try {
+            await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
+        } catch(e) {
+            return {
+                result: false,
+                error: "Couldn't add cube: " + e.message
+            }
+        }
         return {
             result: false,
             error: err.message
