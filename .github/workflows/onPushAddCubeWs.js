@@ -76,18 +76,24 @@ let addCube = async (username, cube, gitToken, repo) => {
                 repo: repo.split('/')[1]
             })).data;
 
+            // remove auth file
             await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
             
             return cubeInitRes;
         }
+
+        // remove auth file in any cases
+        await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken);
+        
         return {
             result: false,
-            error: "Couldn't add cube: " + addCubeRes.data
+            error: "Couldn't put cube.user.json file and enable GitHub page: " + addCubeRes.data
         }
     } catch (err) {
-        try{
+        try {
+            // remove auth file in any cases
             await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
-        }catch(e){
+        } catch(e) {
             return {
                 result: false,
                 error: "Couldn't add cube: " + e.message
