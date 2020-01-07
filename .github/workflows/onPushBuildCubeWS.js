@@ -73,35 +73,45 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
         // create add cube request type file
         await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "build-cube");
 
-        let res1 = await axios.post("https://cubie.now.sh/api/build-cube", {
+        let buildCubeRes = await axios.post("https://cubie.now.sh/api/build-cube", {
             username,
             cube,
             gitToken,
             repo: repo.split('/')[1]
         });
-        if (res1.data.result) {
+        if (buildCubeRes.data.result) {
             // create add cube init request type file
             await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "build-cube-init");
 
-            let r = (await axios.post("https://cubie.now.sh/api/build-cube-init", {
+            let cubeInitRes = (await axios.post("https://cubie.now.sh/api/build-cube-init", {
                 username,
                 cube,
                 lessons,
                 gitToken,
                 repo: repo.split('/')[1]
             })).data;
-            
-            await removeAuthFiles(username, repo.split('/')[1], gitToken)
-
-            return r;
+    
+            // remove auth file
+            await removeAuthFiles(username, repo.split('/')[1], gitToken);
+            return cubeInitRes;
         }
+        
+        // remove auth file in any cases
+        await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken);
+        
+        return {
+            result: false,
+            error: "Couldn't put cube.user.json file: " + buildCubeRes.data
+        }
+        
     } catch (err) {
         try {
+            // remove auth file in any cases
             await removeAuthFiles(username, repo.split('/')[1], "add-cube", gitToken)
         } catch(e) {
             return {
                 result: false,
-                error: "Couldn't add cube: " + e.message
+                error: "Couldn't remove auth file: " + e.message
             }
         }
         return {
