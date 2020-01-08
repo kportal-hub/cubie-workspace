@@ -128,8 +128,10 @@ let addCube = async (username, cube, gitToken, repo) => {
 
 const wsOnPush = async (gitToken, repo) => {
     const cube = JSON.parse(fs.readFileSync(process.env.NODE_CUBE, 'utf8')).commits[0].message.split(".")[0];
-    const userInfo = JSON.parse(fs.readFileSync(`.cubie/cube.json`, 'utf8')).user;
-    return await addCube(userInfo.username, cube, gitToken, repo)
+    if (!(["modified", "complete"].includes(cube))) {
+        const userInfo = JSON.parse(fs.readFileSync(`.cubie/cube.json`, 'utf8')).user;
+        return await addCube(userInfo.username, cube, gitToken, repo)
+    }
 }
 
 wsOnPush(process.argv[2], process.argv[3]).then((res) => {
