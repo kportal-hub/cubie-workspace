@@ -1,13 +1,32 @@
 const fs = require('fs');
 const axios = require("axios");
-const crypto = require('crypto');
 const Octokit = require("@octokit/rest");
+// const crypto = require('crypto');
+const { createCipheriv, randomBytes } = require('crypto');
+
+const inputEncoding = 'utf8';
+const outputEncoding = 'hex';
+
+async function encrypt(content, algorithm, key) {
+    try {
+        key = key.substr(key.length - 32);
+        const iv = new Buffer.from(randomBytes(16), 'hex');
+        const cipher = createCipheriv(algorithm, key, iv);
+        let crypted = cipher.update(content, inputEncoding, outputEncoding);
+        crypted += cipher.final(outputEncoding);
+        return `${iv.toString('hex')}:${crypted.toString()}`;
+    } catch (err) {
+        console.log(err.message);
+        throw err
+    }
+}
 
 async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, requestType) {
     try {
-        var cipher = crypto.createCipher(algorithm, gitToken);
-        var encryptedPhrase = cipher.update(requestType, 'utf8', 'hex');
-        encryptedPhrase += cipher.final('hex');
+        // var cipher = crypto.createCipher(algorithm, gitToken);
+        // var encryptedPhrase = cipher.update(requestType, 'utf8', 'hex');
+        // encryptedPhrase += cipher.final('hex');
+        let encryptedPhrase = await encrypt(requestType, algorithm, gitToken);
 
         let octokit = new Octokit({
             auth: "token " + gitToken
@@ -34,20 +53,20 @@ async function removeAuthFiles(username, repo, requestType, gitToken) {
             auth: "token " + gitToken
         });
 
-        let sha1 = (await octokit.repos.getContents({
+        let sha = (await octokit.repos.getContents({
             owner: username,
             repo,
             path: `${requestType}.req`,
-        })).data.sha
+        })).data.sha;
         await octokit.repos.deleteFile({
             owner: username,
             repo,
             path: `${requestType}.req`,
             branch: "master",
             message: "remove request file",
-            sha: sha1
-        })
-        return true
+            sha
+        });
+        return true;
     } catch (err) {
         throw err
     }
