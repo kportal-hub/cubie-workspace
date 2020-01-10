@@ -94,7 +94,6 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
             })).data;
     
             // remove auth file
-            await removeAuthFiles(username, repo.split('/')[1], "build-cube", gitToken);
             await removeFiles(username, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
             await removeFiles(username, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
             return cubeInitRes;
