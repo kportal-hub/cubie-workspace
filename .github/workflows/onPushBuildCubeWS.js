@@ -131,7 +131,8 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
 const wsOnPush = async (gitToken, repo) => {
     const cube = JSON.parse(fs.readFileSync(process.env.cube, 'utf8')).commits[0].message.split(".")[0];
     const userInfo = JSON.parse(fs.readFileSync(`.cubie/cube.json`, 'utf8')).user;
-    const lessons = JSON.parse(fs.readFileSync(`builds/${cube}.cube.json`, 'utf8')).lessons;
+    const result = JSON.parse(fs.readFileSync(`builds/${cube}.cube.json`, 'utf8')).result;
+    const lessons = Object.keys(result);
     return await buildCube(userInfo.username, cube, lessons, gitToken, repo);
 }
 
