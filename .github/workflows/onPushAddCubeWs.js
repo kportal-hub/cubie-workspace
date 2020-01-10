@@ -98,13 +98,13 @@ let addCube = async (username, cube, gitToken, repo) => {
 
             // remove auth file
             await removeFiles(username, repo.split('/')[1], "add-cube.req", "master", "Delete auth req file", gitToken);
-            await removeFiles(username, repo.split('/')[1], `${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+            await removeFiles(username, repo.split('/')[1], `cubes/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
             return cubeInitRes;
         }
 
         // remove auth file in any cases
         await removeFiles(username, repo.split('/')[1], "add-cube.req", "master", "Delete auth req file", gitToken);
-        await removeFiles(username, repo.split('/')[1], `${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+        await removeFiles(username, repo.split('/')[1], `cubes/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
         
         return {
             result: false,
@@ -114,7 +114,7 @@ let addCube = async (username, cube, gitToken, repo) => {
         try {
             // remove auth file in any cases
             await removeFiles(username, repo.split('/')[1], "add-cube.req", "master", "Delete auth req file", gitToken);
-            await removeFiles(username, repo.split('/')[1], `${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+            await removeFiles(username, repo.split('/')[1], `cubes/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
         } catch(e) {
             return {
                 result: false,
