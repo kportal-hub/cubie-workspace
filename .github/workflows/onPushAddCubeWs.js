@@ -88,7 +88,6 @@ let addCube = async (username, cube, gitToken, repo) => {
             repo: repo.split('/')[1]
         });
         if (addCubeRes.data.result) {
-            // create add cube init request type file to authorize the action procedure
             let cubeInitRes = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
                 username,
                 cube,
