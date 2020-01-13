@@ -1,7 +1,6 @@
 const fs = require('fs');
 const axios = require("axios");
 const Octokit = require("@octokit/rest");
-// const crypto = require('crypto');
 const { createCipheriv, randomBytes } = require('crypto');
 
 const inputEncoding = 'utf8';
@@ -21,18 +20,14 @@ async function encrypt(content, algorithm, key) {
     }
 }
 
-async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, requestType) {
+async function encryptAndPutAuthFile(owner, repo, algorithm, gitToken, requestType) {
     try {
-        // var cipher = crypto.createCipher(algorithm, gitToken);
-        // var encryptedPhrase = cipher.update(requestType, 'utf8', 'hex');
-        // encryptedPhrase += cipher.final('hex');
         let encryptedPhrase = await encrypt(requestType, algorithm, gitToken);
-
         let octokit = new Octokit({
             auth: "token " + gitToken
         });
         await octokit.repos.createOrUpdateFile({
-            owner: username,
+            owner,
             repo,
             path: `${requestType}.req`,
             branch: "master",
@@ -46,19 +41,18 @@ async function encryptAndPutAuthFile(username, repo, algorithm, gitToken, reques
     }
 }
 
-async function removeFiles(username, repo, path, branch, message, gitToken) {
+async function removeFiles(owner, repo, path, branch, message, gitToken) {
     try {
         let octokit = new Octokit({
             auth: "token " + gitToken
         });
-
         let sha = (await octokit.repos.getContents({
-            owner: username,
+            owner,
             repo,
             path,
         })).data.sha;
         await octokit.repos.deleteFile({
-            owner: username,
+            owner,
             repo,
             path,
             branch,
@@ -73,19 +67,22 @@ async function removeFiles(username, repo, path, branch, message, gitToken) {
 
 let buildCube = async (username, cube, lessons, gitToken, repo) => {
     const algorithm = 'aes256';
+    const KIDOCODE = "kportal-hub";
 
     try {
         // create add cube request type file
-        await encryptAndPutAuthFile(username, repo.split('/')[1], algorithm, gitToken, "build-cube");
+        await encryptAndPutAuthFile(KIDOCODE, repo.split('/')[1], algorithm, gitToken, "build-cube");
 
-        let buildCubeRes = await axios.post("https://cubie.now.sh/api/build-cube", {
+        // let buildCubeRes = await axios.post("https://cubie.now.sh/api/build-cube", {
+        let buildCubeRes = await axios.post("https://216487aa.ngrok.io/api/build-cube", {
             username,
             cube,
             gitToken,
             repo: repo.split('/')[1]
         });
         if (buildCubeRes.data.result) {
-            let cubeInitRes = (await axios.post("https://cubie.now.sh/api/build-cube-init", {
+            // let cubeInitRes = (await axios.post("https://cubie.now.sh/api/build-cube-init", {
+            let cubeInitRes = (await axios.post("https://216487aa.ngrok.io/api/build-cube-init", {
                 username,
                 cube,
                 lessons,
@@ -94,14 +91,14 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
             })).data;
     
             // remove auth file
-            await removeFiles(username, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
-            await removeFiles(username, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+            await removeFiles(KIDOCODE, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
+            await removeFiles(KIDOCODE, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
             return cubeInitRes;
         }
         
         // remove auth file in any cases
-        await removeFiles(username, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
-        await removeFiles(username, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+        await removeFiles(KIDOCODE, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
+        await removeFiles(KIDOCODE, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
         
         return {
             result: false,
@@ -111,8 +108,8 @@ let buildCube = async (username, cube, lessons, gitToken, repo) => {
     } catch (err) {
         try {
             // remove auth file in any cases
-            await removeFiles(username, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
-            await removeFiles(username, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
+            await removeFiles(KIDOCODE, repo.split('/')[1], "build-cube.req", "master", "Delete auth req file", gitToken);
+            await removeFiles(KIDOCODE, repo.split('/')[1], `builds/${cube}.cube.json`, "master", `Delete ${cube}.cube.json file`, gitToken);
         } catch(e) {
             return {
                 result: false,
