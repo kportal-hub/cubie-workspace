@@ -76,16 +76,14 @@ let addCube = async (username, cube, gitToken, repo) => {
         // create add-cube request to authorize student access
         await encryptAndPutAuthFile(KIDOCODE, repo.split('/')[1], algorithm, gitToken, "add-cube");
 
-        // let addCubeRes = await axios.post("https://cubie.now.sh/api/add-cube", {
-        let addCubeRes = await axios.post("https://216487aa.ngrok.io/api/add-cube", {
+        let addCubeRes = await axios.post("https://cubie.now.sh/api/add-cube", {
             username,
             cube,
             gitToken,
             repo: repo.split('/')[1]
         });
         if (addCubeRes.data.result) {
-            // let cubeInitRes = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
-            let cubeInitRes = (await axios.post("https://216487aa.ngrok.io/api/add-cube-init", {
+            let cubeInitRes = (await axios.post("https://cubie.now.sh/api/add-cube-init", {
                 username,
                 cube,
                 gitToken,
