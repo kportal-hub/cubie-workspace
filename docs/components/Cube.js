@@ -1,6 +1,5 @@
 class CubeView {
     constructor(name, cube) {
-        debugger
         this.name = name
         this.time = cube.time
         this.complete = cube.complete
