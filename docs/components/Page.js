@@ -23,8 +23,9 @@ function MakePage() {
 
         }
         async start() {
-            let cubeData = await fetch("./cubes.json?123")
+            let cubeData = await fetch("../.cubie/cube.json?123")
             cubeData = await cubeData.json()
+            console.log(cubeData)
             this.points = 0
             for (let [key, value] of Object.entries(cubeData.cubes)) {
                 this.cubes[key] = new CubeView(key, value)
